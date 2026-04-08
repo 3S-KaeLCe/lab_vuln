@@ -92,7 +92,7 @@ Cette partie indique au moteur de base de données le répertoire dans lequel la
 
 ### Volume de logs partagé
 
-Les logs Nginx sont défini dans un volume partagé avec le serveur web, ce qui peut conduire à des problèmes de sécurité 
+Les logs Nginx sont définis dans un volume partagé avec le serveur web, ce qui peut conduire à des problèmes de sécurité 
 majeur, notamment en cas de LFI.
 
 
@@ -100,13 +100,13 @@ majeur, notamment en cas de LFI.
 
 ### escape=none
 
-Les logs dispose d'un format customisé qui défini la valeur escape à none. En cas de LFI, cette partie facilitera une RCE.
+Les logs disposent d'un format customisé qui défini la valeur escape à none. En cas de LFI, cette partie facilitera une RCE.
 
 # Les vulnérabilités dans le code
 
 ## SQLi
 
-Le code permet de réaliser des SQLi sur la recherche de ressources.
+Le code permet de réaliser des SQLi sur l'authentification et sur la recherche de ressources.
 
 ## XSS
 
@@ -121,6 +121,10 @@ Aucun contrôle réalisé sur les fichiers uploadés pour les avatars.
 Il est possible de réaliser une LFI via le système de langue en place.
 
 # Travaux pratique
+
+## Authentification
+
+S'authentifier en tant qu'admin.
 
 ## Dump SQL
 
@@ -180,6 +184,10 @@ Réaliser une RCE via LFI et afficher le contenu de /dev
 
 Créer un répertoire et monter le disque de la machine hôte sur ce répertoire
 
+## Supprimer Privileged = true et changer d'image Docker
+
+Faire whoami via la RCE, réessayer de monter le disque de la machine hôte sur un répertoire.
+
 ## Supprimer escape=none
 
 Dans la configuration du nginx, supprimer le formattage customisé des logs. Tentez de reproduire la RCE.
@@ -188,10 +196,6 @@ Dans la configuration du nginx, supprimer le formattage customisé des logs. Ten
 
 Dans le docker-compose.yml, il n'est pas nécessaire de partager le volume de logs avec le serveur web
 
-## Supprimer Privileged = true et changer d'image Docker
-
-Faire whoami via la RCE, réessayer de monter le disque de la machine hôte sur un répertoire.
-
-## Activer le mod security côté Nginx
+## Utiliser une image Nginx avec ModSecurity ou utiliser l'image de Bunkerweb
 
 Vérifier si les différentes attaques sont bloquées.
