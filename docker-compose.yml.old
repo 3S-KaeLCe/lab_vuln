@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: poc_php_web
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: appdb
+      DB_USER: root
+      DB_PASSWORD: rootpass
+      SALT: 'ajgtpbj45pbdu155c5df5'
+    depends_on:
+      - db
+    volumes:
+      - ./app:/var/www/html
+    privileged: true
+    command: >
+      sh -c "mkdir -p /var/www/html/avatar &&
+             chown -R www-data:www-data /var/www/html/avatar &&
+             chmod -R 775 /var/www/html/avatar &&
+             apache2-foreground"
+
+  db:
+    image: mysql:8.0
+    container_name: poc_php_db
+    restart: unless-stopped
+    command: --secure-file-priv=""
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql_data:
