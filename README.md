@@ -15,6 +15,8 @@ docker compose up --build
 
 - /
 - /user.php
+- /resources.php
+- /user.php
 
 ## Comptes
 
@@ -25,8 +27,8 @@ docker compose up --build
 
 - `app/` : code PHP
 - `db/init/` : scripts SQL d'initialisation
-- `Dockerfile` : image PHP 8.2 Apache avec extensions MySQL
-- `docker-compose.yml` : orchestration web + base
+- `Dockerfile` : image PHP avec extensions MySQL
+- `docker-compose.yml` : orchestration reverse-proxy + web + base de données
 
 ## Mettre à jour
 
@@ -87,6 +89,18 @@ Bien qu'un compte applicatif soit crée côté SQL, le serveur web utilise dans 
 ### secure-file-priv=""
 
 Cette partie indique au moteur de base de données le répertoire dans lequel la fonction LOAD_FILE a le droit de lire des fichiers. En laissant les guillemets vides, la fonction peut lire dans n'importe quel dossier.
+
+### Volume de logs partagé
+
+Les logs Nginx sont défini dans un volume partagé avec le serveur web, ce qui peut conduire à des problèmes de sécurité 
+majeur, notamment en cas de LFI.
+
+
+## nginx/default.conf
+
+### escape=none
+
+Les logs dispose d'un format customisé qui défini la valeur escape à none. En cas de LFI, cette partie facilitera une RCE.
 
 # Les vulnérabilités dans le code
 
@@ -165,6 +179,14 @@ Réaliser une RCE via LFI et afficher le contenu de /dev
 ## Accéder au système de fichier de la machine hôte via la RCE
 
 Créer un répertoire et monter le disque de la machine hôte sur ce répertoire
+
+## Supprimer escape=none
+
+Dans la configuration du nginx, supprimer le formattage customisé des logs. Tentez de reproduire la RCE.
+
+## Supprimer le volume partagé de logs
+
+Dans le docker-compose.yml, il n'est pas nécessaire de partager le volume de logs avec le serveur web
 
 ## Supprimer Privileged = true et changer d'image Docker
 
